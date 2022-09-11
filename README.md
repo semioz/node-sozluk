@@ -1,2 +1,4 @@
-# node-sozluk
-node sözlük
+# node sözlük
+
+
+"mern" stack ile bir sözlük klonu oluşturma çabaları...
