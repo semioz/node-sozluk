@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGO_URI, {
     console.log("Can't connect to the MongoDB!")
     console.log(err)
 });
-
+//middlewares
 app.use(express.json())
 app.use(morgan("common"));
 app.use(helmet());
@@ -30,7 +30,7 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
 
-app.use("/api/user", userRouter);
+app.use("/api/biri", userRouter);
 app.use("/api/auth", authRouter);
 
 app.listen(port, () => {

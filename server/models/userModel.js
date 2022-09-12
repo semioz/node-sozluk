@@ -7,8 +7,8 @@ const userSchema = mongoose.Schema({
     following: { type: Number, default: 0 },
     followers: { type: Number, default: 0 },
     about: { type: String, max: 50 },
-    rozets: { type: String },
-    createdAt: { type: Date, default: new Date() },
+    createdAt: { type: Date, default: new Date().toISOString() },
+    updatedAt: { type: Date },
     profilePicture: { type: String, default: "" }
 });
 

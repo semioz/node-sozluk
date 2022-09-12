@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 
 const entrySchema = mongoose.Schema({
-    description: String,
+    entry: String,
     author: String,
+    nodeLike: { type: Number, default: null },
     nodeUp: { type: Number, default: 0 },
     nodeDown: { type: Number, default: 0 },
     createdAt: { type: Date, default: new Date() }
