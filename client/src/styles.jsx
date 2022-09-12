@@ -4,23 +4,36 @@ export default makeStyles(() => ({
   sozluk: {
     color:"#68a063"
   },
-
+  anchorStyle: {
+    color:"#EEEEEE",
+    textDecoration:"none",
+    fontSize:"0.85rem"
+  },
+  userMenu: {
+    display:"inline-block",
+    color:"white",
+    fontFamily:'Poppins, sans-serif',
+    paddingLeft:"55%",
+    paddingBottom:"33px",
+    verticalAlign:"middle"
+  },
   appBar: {
-    display:"flex",
-    padding: "20px 10px 20px 10px",
+    display:"inline-block",
+    paddingBottom:"20px",
     width:"100%",
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor:"#2C3333",
-    borderTop:"4px solid #yellow"
+    borderTop:"5px solid #68a063"
   },
   heading: {
     color: '#EEEEEE',
     fontFamily: 'Poppins, sans-serif',
-    marginRight:"900px"
+    paddingBottom:"33px",
+    display:"inline-block",
+    verticalAlign:"middle"
   },
   image: {
-    marginLeft: '10px',
+    paddingTop:"9px",
+    marginLeft: '15%',
+    display:"inline-block"
   },
 }));

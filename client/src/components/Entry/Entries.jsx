@@ -6,7 +6,7 @@ function Entries() {
     const classes = useStyles();
     return (
         <>
-        <h1>helo</h1>
+        <Entry />
         <Entry />
         </>
     );
