@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 
 const entrySchema = mongoose.Schema({
-    entry: String,
-    author: String,
-    nodeLike: { type: Number, default: null },
-    nodeUp: { type: Number, default: 0 },
-    nodeDown: { type: Number, default: 0 },
+    userID: { type: String, required: true },
+    baslik: { type: String, required: true },
+    entry: { type: String, max: 500 },
+    nodeLike: { type: Array, default: [] },
+    nodeUp: { type: Array, default: [] },
+    nodeDown: { type: Array, default: [] },
     createdAt: { type: Date, default: new Date() }
 });
 

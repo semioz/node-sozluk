@@ -50,10 +50,44 @@ router
         }
     })
 
+router.put("/:id/takip", async(req, res) => {
+    if (req.body.userID !== req.params.id) {
+        try {
+            const user = await User.findById(req.params.id);
+            const currentUser = await User.findById(req.body.userID);
+            if (!user.followers.includes(req.body.userID)) {
+                await user.updateOne({ $push: { followers: req.body.userID } });
+                await currentUser.updateOne({ $push: { followings: req.params.id } });
+                res.status(200).json("kullanıcı takip edildi!");
+            } else {
+                res.status(403).json("bu kişiyi zaten takip ediyorsun!");
+            }
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    } else {
+        res.status(403).json("kendini takip edemezsin ki!");
+    }
+});
 
-
-
-//follow a user
-//unfollow a user
+router.put("/:id/takipsiz", async(req, res) => {
+    if (req.body.userID !== req.params.id) {
+        try {
+            const user = await User.findById(req.params.id);
+            const currentUser = await User.findById(req.body.userID);
+            if (user.followers.includes(req.body.userId)) {
+                await user.updateOne({ $pull: { followers: req.body.userID } });
+                await currentUser.updateOne({ $pull: { followings: req.params.id } });
+                res.status(200).json("kullanıcı takipten çıkarıldı!");
+            } else {
+                res.status(403).json("bu kullanıcıyı takip etmiyorsun!");
+            }
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    } else {
+        res.status(403).json("kendini takipten çıkamazsın ki!");
+    }
+});
 
 export default router;

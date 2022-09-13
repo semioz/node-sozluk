@@ -6,6 +6,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import userRouter from "./routes/users.js";
 import authRouter from "./routes/auth.js";
+import entryRouter from "./routes/entry.js";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
 app.use("/api/biri", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/entry", entryRouter);
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}...`)

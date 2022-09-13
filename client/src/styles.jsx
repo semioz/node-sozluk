@@ -12,7 +12,7 @@ export default makeStyles(() => ({
   userMenu: {
     display:"inline-block",
     color:"white",
-    fontFamily:'Poppins, sans-serif',
+    fontFamily:"Poppins, sans-serif",
     paddingLeft:"55%",
     paddingBottom:"33px",
     verticalAlign:"middle"
@@ -36,4 +36,7 @@ export default makeStyles(() => ({
     marginLeft: '15%',
     display:"inline-block"
   },
+  toolBar: {
+    borderRadius:"12px"
+  }
 }));
