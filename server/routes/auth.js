@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import User from "../models/userModel.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 //register
 router.post("/kayit", async(req, res) => {
