@@ -1,7 +1,6 @@
 import User from "../models/userModel.js";
 import AppError from "../utils/appError.js";
 
-
 export const getUser = async(req, res, next) => {
     const user = await User.findOne({ username: req.params.nickname })
 
