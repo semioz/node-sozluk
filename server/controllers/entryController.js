@@ -51,3 +51,6 @@ export const updateEntry = catchAsync(async(req, res, next) => {
         }
     })
 });
+
+
+//spesifik entry'ler için aggregation pipeline...

@@ -5,6 +5,18 @@ const handleCastErrorDB = err => {
     return new AppError(message, 400)
 }
 
+//email ve nickname'in aynı olduğu durumlarda bunu fırlatıyoruz.
+const handleDuplicateFieldsDB = err => {
+    const value = Object.values(err.keyValue)[0]
+    const message = `Duplicate field value: ${value}. Please use another value`
+    return new AppError(message, 400)
+};
+
+//validation check
+const handleValidationErrorDB = err => {
+    const message = `Invalid input data: ${err._message}`
+    return new AppError(message, 400)
+};
 
 const sendErrorDev = (err, res) => {
     res.status(err.statusCode).json({
@@ -43,9 +55,12 @@ export default (err, req, res, next) => {
     if (process.env.NODE_ENV === "development") {
         sendErrorDev(err, res)
     } else if (process.env.NODE_ENV === "production") {
+        //productionda temiz hatalar vermek lazım...
         let error = {...err };
         if (error.name === "CastError") error = handleCastErrorDB(error)
+        if (error.code === 11000) error = handleDuplicateFieldsDB(error)
+        if (error._message === "Validation failed") error = handleValidationErrorDB(error)
 
         sendErrorProd(error, res)
     }
-}
+};
