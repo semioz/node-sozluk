@@ -1,7 +1,8 @@
 import AppError from "./../utils/appError.js";
 import Entry from "../models/entryModel.js";
+import catchAsync from "./../utils/catchAsync.js";
 
-export const getEntry = async(req, res, next) => {
+export const getEntry = catchAsync(async(req, res, next) => {
     const entry = await Entry.findOne({ entryNumber: req.params.entrynum })
 
     if (!entry) {
@@ -13,9 +14,9 @@ export const getEntry = async(req, res, next) => {
             entry
         }
     })
-};
+});
 
-export const createEntry = async(req, res, next) => {
+export const createEntry = catchAsync(async(req, res, next) => {
     const newEntry = await Entry.create(req.body);
     res.status(201).json({
         status: "success",
@@ -23,9 +24,9 @@ export const createEntry = async(req, res, next) => {
             entry: newEntry
         }
     })
-};
+});
 
-export const deleteEntry = async(req, res, next) => {
+export const deleteEntry = catchAsync(async(req, res, next) => {
     const entry = await Entry.findOneAndDelete({ entryNumber: req.params.entrynum })
     if (!entry) {
         return next(new AppError("böyle bir entry yok!", 404))
@@ -34,10 +35,10 @@ export const deleteEntry = async(req, res, next) => {
         status: "success",
         data: null
     })
-};
+});
 
 //entry'yi sadece o entry'yi yazan değiştirebilir, moderatör sadece silebilir. değiştiremez.
-export const updateEntry = async(req, res, next) => {
+export const updateEntry = catchAsync(async(req, res, next) => {
     const updatedEntry = await Entry.findOneAndUpdate({ entryNumber: req.params.entrynum })
         //catchAsync lazım gibi buraya. bi bak
     if (!entry) {
@@ -49,4 +50,4 @@ export const updateEntry = async(req, res, next) => {
             entry: updatedEntry
         }
     })
-};
+});

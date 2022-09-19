@@ -1,10 +1,11 @@
 import express from "express";
 const router = express.Router();
+import { signUp, logIn } from "./../controllers/authController.js";
 import { getUser, createUser, deleteUser, updateUser } from "./../controllers/userController.js";
 
 
-//router.post("/kayit", authController.signup);
-//router.post("/giris", authController.login);
+router.post("/kayit", signUp);
+router.post("/giris", logIn);
 
 router
     .route("/:nickname")
