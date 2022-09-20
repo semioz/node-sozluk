@@ -17,6 +17,11 @@ const userSchema = mongoose.Schema({
         validate: [validator.isEmail, "geçerli bir email değil bu!"],
         unique: [true, "bu email önceden kullanılmış!"]
     },
+    role: {
+        type: String,
+        enum: ["çaylak", "yazar", "moderatör"],
+        default: "çaylak"
+    },
     password: {
         type: String,
         required: [true, "bir şifre belirlemelisin!"],

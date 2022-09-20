@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { signUp, logIn } from "./../controllers/authController.js";
+import { signUp, logIn, protect, restricTo } from "./../controllers/authController.js";
 import { getUser, createUser, deleteUser, updateUser } from "./../controllers/userController.js";
 
 
@@ -10,7 +10,8 @@ router.post("/giris", logIn);
 router
     .route("/:nickname")
     .get(getUser)
-    .delete(deleteUser)
+    //???
+    .delete(protect, restricTo("moderatör"), deleteUser)
     .patch(updateUser)
 
 router
