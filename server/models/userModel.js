@@ -73,6 +73,15 @@ userSchema.pre("save", async function(next) {
     next();
 })
 
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+    if (this.passwordChangedAt) {
+        const changedTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+        return JWTTimestamp < changedTimeStamp
+    }
+    //false means "not changed"
+    return false;
+}
+
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
     return bcrypt.compare(candidatePassword, userPassword)
 };

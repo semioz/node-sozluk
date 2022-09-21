@@ -16,16 +16,6 @@ export const getUser = catchAsync(async(req, res, next) => {
     })
 });
 
-export const createUser = catchAsync(async(req, res, next) => {
-    const newUser = await User.create(req.body);
-    res.status(201).json({
-        status: "success",
-        data: {
-            user: newUser
-        }
-    })
-});
-
 export const deleteUser = catchAsync(async(req, res, next) => {
     const user = await User.findOneAndDelete({ username: req.params.nickname })
     if (!user) {

@@ -10,6 +10,18 @@ const signToken = id => {
     });
 };
 
+const createSendToken = (user, statusCode, res) => {
+    const token = signToken(user._id)
+
+    res.status(statusCode).json({
+        status: "success",
+        token,
+        data:  {
+            user
+        }
+    })
+};
+
 export const signUp = catchAsync(async(req, res, next) => {
     const newUser = await User.create({
         username: req.body.username,
@@ -19,15 +31,7 @@ export const signUp = catchAsync(async(req, res, next) => {
         passwordConfirm: req.body.passwordConfirm,
         passwordChangedAt: req.body.passwordChangedAt
     });
-    const token = signToken(newUser._id)
-
-    res.status(201).json({
-        status: "success",
-        token,
-        data:  {
-            user: newUser
-        }
-    })
+    createSendToken(newUser, 201, res)
 });
 
 export const logIn = catchAsync(async(req, res, next) => {
@@ -45,11 +49,7 @@ export const logIn = catchAsync(async(req, res, next) => {
         return next(new AppError("hatalı email veya şifre!", 401))
     }
     //sıkıntı yoksa tokeni client'a yolla
-    const token = signToken(user._id)
-    res.status(200).json({
-        status: "success",
-        token
-    })
+    createSendToken(user, 200, res)
 });
 
 //kullanıcının kimliğinin doğrulup doğrulanmadığını kontrol et.
@@ -77,7 +77,6 @@ export const protect = catchAsync(async(req, res, next) => {
         return next(new AppError("şifreni değiştirdin! lütfen giriş yap!", 401))
     }
 
-
     req.user = freshUser;
     next();
 });
@@ -91,3 +90,28 @@ export const restricTo = (...roller) => {
         }
     }
 };
+
+export const forgotPassword = catchAsync(async(req, res, next) => {
+
+});
+
+export const resetPassword = catchAsync(async(req, res, next) => {
+
+});
+
+export const updatePassword = catchAsync(async(req, res, next) => {
+    //db'den kullanıcıyı getir
+    const user = await User.findById(req.user.id).select("+password");
+
+    //kullanıcıdan şifresini değiştirmesi için ilk önce güncel şifresini iste
+    //şifrenin doğruluğunun kontrolü
+    if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
+        return next(new AppError("girdiğin şifre doğru değil!", 401))
+    };
+    //eğer doğruysa, şifresini güncelle.
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm
+        //log the user in, send JWT
+    createSendToken(user, 200, res);
+
+});
