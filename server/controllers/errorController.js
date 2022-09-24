@@ -18,6 +18,10 @@ const handleValidationErrorDB = err => {
     return new AppError(message, 400)
 };
 
+const handleJwtError = () => new AppError("Invakid token! Please log in again!", 401)
+
+const handleJwtExpiredError = () => new AppError("Token has expired! Please log in again!", 401)
+
 const sendErrorDev = (err, res) => {
     res.status(err.statusCode).json({
         status: err.status,
@@ -60,6 +64,8 @@ export default (err, req, res, next) => {
         if (error.name === "CastError") error = handleCastErrorDB(error)
         if (error.code === 11000) error = handleDuplicateFieldsDB(error)
         if (error._message === "Validation failed") error = handleValidationErrorDB(error)
+        if (error.name === "JsonWebTokenError") error = handleJwtError()
+        if (error.name === "TokenExpiredError") error = handleJwtExpiredError()
 
         sendErrorProd(error, res)
     }
