@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 const userSchema = mongoose.Schema({
     username: {
@@ -60,7 +61,14 @@ const userSchema = mongoose.Schema({
         type: String,
         default: ""
     },
-    passwordChangedAt: Date
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    active: {
+        type: Boolean,
+        default: true,
+        select: false
+    }
 });
 
 //hash the password
@@ -72,6 +80,20 @@ userSchema.pre("save", async function(next) {
     this.passwordConfirm = undefined;
     next();
 })
+
+userSchema.pre("save", function(next) {
+    if (!this.isModified("password") || this.isNew) return next();
+
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+});
+
+//we don't users to see unactive property
+userSchema.pre(/^find/, function(next) {
+    //this points to current query
+    this.find({ active: { $ne: false } });
+    next();
+});
 
 userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
     if (this.passwordChangedAt) {
@@ -85,6 +107,21 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
     return bcrypt.compare(candidatePassword, userPassword)
 };
+
+//bu token yalnızca 10 dakikalığına geçerli olacağı için bcrypt hashlemeye gerek yok!
+userSchema.methods.createPasswordResetToken = async function() {
+    //gecici sifre olustur crypto modülü ile
+    //72 karakter uzunlugunda güclü bir sifre olustur
+    const resetToken = crypto.randomBytes(32).toString("hex")
+
+    this.passwordResetToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex")
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+    return resetToken;
+}
 
 const User = mongoose.model("User", userSchema);
 

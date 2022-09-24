@@ -2,11 +2,11 @@
     "name": "server",
     "version": "1.0.0",
     "description": "",
-    "main": "app.js",
+    "main": "server.js",
     "type": "module",
     "scripts": {
-        "start:dev": "nodemon app.js",
-        "start:prod": "NODE_ENV=production nodemon app.js"
+        "start:dev": "nodemon server.js",
+        "start:prod": "NODE_ENV=production nodemon server.js"
     },
     "keywords": [],
     "author": "Semih Berkay Öztürk",
