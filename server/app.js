@@ -4,21 +4,65 @@ import userRoute from "./routes/userRoute.js";
 import entryRoute from "./routes/entryRoute.js"
 import AppError from "./utils/appError.js"
 import globalErrorHandler from "./controllers/errorController.js";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
+import hpp from "hpp";
 
 const app = express();
 
 //middlewares
+
+//security http headers
+app.use(helmet());
+
+//development logging
 app.use(express.json())
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"))
 };
+
+//aynı IP'den gelen requestlere sınır koy
+const limiter = rateLimit({
+    //1 saatte maksimum 100 istek atabilir aynı IP
+    max: 100,
+    windowMs: 60 * 60 * 100,
+    message: "Too many requests from this IP. Please try again later!"
+})
+
+app.use("/", limiter)
+
+//body parser
+app.use(express.json({
+    limit: "10kb"
+}));
+
+//security against nosql query injection
+app.use(mongoSanitize());
+
+//Data sanitization against XSS attacks
+app.use(xss());
 
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
     next();
 });
 
+//prevent parameter pollution
+app.use(hpp({
+    whitelist: [
+        "duration",
+        "ratingsQuantity",
+        "ratingsAverage",
+        "difficulty",
+        "maxGroupSize",
+        "price"
+    ]
+}));
 
+
+//----Routes----
 app.use("/biri", userRoute);
 app.use("/entry", entryRoute);
 
