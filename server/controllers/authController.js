@@ -4,6 +4,7 @@ import AppError from "./../utils/appError.js";
 import catchAsync from "./../utils/catchAsync.js";
 import { promisify } from "util";
 import sendMail from "./../utils/email.js";
+import crypto from "crypto";
 
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -55,7 +56,7 @@ export const logIn = catchAsync(async(req, res, next) => {
         return next(new AppError("email ve şifre gerekli!", 400))
     }
 
-    //kullanıcını varolup olmadığını ve şifrenin doğruluğunu kontrol et!
+    //kullanıcının varolup olmadığını ve şifrenin doğruluğunu kontrol et!
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password))) {
@@ -75,7 +76,7 @@ export const protect = catchAsync(async(req, res, next) => {
         token = req.headers.authorization.split(" ")[1]
     }
     if (!token) {
-        return next(new AppError("giriş yapmadın!", 401))
+        return next(new AppError("giriş yapmadın! lütfen giriş yap!", 401))
     }
 
     //tokeni doğrula
@@ -93,7 +94,7 @@ export const protect = catchAsync(async(req, res, next) => {
     req.user = freshUser;
     next();
 });
-//kullanıcıya göre izin vermek...
+//kullanıcı rolüne göre izinler
 export const restricTo = (...roller) => {
     return (req, res, next) => {
         //roller -> ["çaylak", "yazar", "moderatör"]
@@ -108,14 +109,14 @@ export const forgotPassword = catchAsync(async(req, res, next) => {
     //emaile göre kullanıcıyı bul
     const user = User.findOne({ email: req.body.email })
     if (!user) {
-        return next(new AppError("bu emaile sahip bir kullanıcı yok!", 404))
+        return next(new AppError("bu email'e sahip bir kullanıcı yok!", 404))
     }
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
     //kullanıcının emailine yolla
     const resetURL = `${req.protocol}://${req.get("host")}/ayarlar/sifre-sifirla/${resetToken}`
 
-    //burasi degisecek tabii ki :D
+    //burasi degisecek
     const message = `şu '${resetURL}' url'e şifre ve şifre onay seçenekleriyle patch request at!`
 
     try {
@@ -133,7 +134,7 @@ export const forgotPassword = catchAsync(async(req, res, next) => {
         user.passwordResetExpires = undefined;
         await user.save({ validateBeforeSave: false })
 
-        return next(new AppError("emaili yollarken birtakım hatalar çıktı!", 500))
+        return next(new AppError("emaili yollarken birtakım hatalar çıktı. tekrar deneyin!", 500))
     }
 });
 
@@ -144,7 +145,7 @@ export const resetPassword = catchAsync(async(req, res, next) => {
         passwordResetExpires: { $gt: Date.now() }
     })
     if (!user) {
-        return next(new AppError("Token is invalid or has expired", 400))
+        return next(new AppError("token geçersiz veya süresi dolmuş!", 400))
     }
     user.password = req.body.password;
     user.passwordConfirm = req.body.passwordConfirm;

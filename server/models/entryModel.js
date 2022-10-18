@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const entrySchema = mongoose.Schema({
-    author: { type: String, required: true },
+    author: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
     entryNumber: { type: Number, default: Date.now() },
     baslik: { type: String, required: true },
     entry: { type: String, max: 102399, required: true },
@@ -10,7 +10,11 @@ const entrySchema = mongoose.Schema({
     nodeDown: { type: Array, default: [] },
     createdAt: { type: Date, default: new Date().toISOString() }
     //entry düzenleme tarihini ekle
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 });
+
 
 const Entry = mongoose.model("Entry", entrySchema);
 

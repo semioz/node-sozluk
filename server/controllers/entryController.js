@@ -1,6 +1,15 @@
 import AppError from "./../utils/appError.js";
 import Entry from "../models/entryModel.js";
 import catchAsync from "./../utils/catchAsync.js";
+import { deleteOne } from "./handlerFactory.js";
+
+export const getDebe = (req, res, next) => {
+    req.query.limit = "1";
+    req.query.sortFields = "nodeLike"
+    req.query.fields = "author, baslik, entry, nodeLike, nodeUp, nodeDown, createdAt"
+    next();
+};
+
 
 export const getEntry = catchAsync(async(req, res, next) => {
     const entry = await Entry.findOne({ entryNumber: req.params.entrynum })
@@ -16,7 +25,13 @@ export const getEntry = catchAsync(async(req, res, next) => {
     })
 });
 
+export const setEntryUserIds = (req, res, next) => {
+    if (!req.body.author) req.body.author = req.user.id;
+    next()
+}
+
 export const createEntry = catchAsync(async(req, res, next) => {
+
     const newEntry = await Entry.create(req.body);
     res.status(201).json({
         status: "success",
@@ -27,7 +42,7 @@ export const createEntry = catchAsync(async(req, res, next) => {
 });
 
 export const deleteEntry = catchAsync(async(req, res, next) => {
-    const entry = await Entry.findOneAndDelete({ entryNumber: req.params.entrynum })
+    const entry = await Entry.findByIdAndDelete({ entryNumber: req.params.entrynum })
     if (!entry) {
         return next(new AppError("böyle bir entry yok!", 404))
     }
@@ -39,7 +54,7 @@ export const deleteEntry = catchAsync(async(req, res, next) => {
 
 //entry'yi sadece o entry'yi yazan değiştirebilir, moderatör sadece silebilir. değiştiremez.
 export const updateEntry = catchAsync(async(req, res, next) => {
-    const updatedEntry = await Entry.findOneAndUpdate({ entryNumber: req.params.entrynum })
+    const entry = await Entry.findOneAndUpdate({ entryNumber: req.params.entrynum })
         //catchAsync lazım gibi buraya. bi bak
     if (!entry) {
         return next(new AppError("böyle bir entry yok!", 404))
@@ -47,7 +62,7 @@ export const updateEntry = catchAsync(async(req, res, next) => {
     res.status(200).json({
         status: "success",
         data: {
-            entry: updatedEntry
+            entry
         }
     })
 });
