@@ -5,7 +5,7 @@
 
 
 ## Technologies
-* MVC Architecture
+* [MVC Architecture](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
 
 * [Node.js](https://nodejs.org/en/)
 * [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
