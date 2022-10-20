@@ -1,11 +1,11 @@
 ![LYw99MlySWetFdHfQNzaTQ_mini_2a6](https://user-images.githubusercontent.com/90466553/189542345-e87cf33e-690c-4358-a104-615a22a882a9.jpg)
 
 
-## A Collaborative Hypertext Dictionary
+## A Collaborative Hypertext Dictionary Like Eksi Sozluk
 
 
 ## Technologies
-* MVC Architecture
+* [MVC Architecture](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
 
 * [Node.js](https://nodejs.org/en/)
 * [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
