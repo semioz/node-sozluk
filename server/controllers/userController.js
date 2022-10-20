@@ -51,3 +51,25 @@ export const updateMe = catchAsync(async(req, res, next) => {
         }
     })
 });
+
+export const deleteUser = catchAsync(async(req, res, next) => {
+    const user = await User.findOneAndDelete({ username: req.params.nickname });
+    if (!user) {
+        return next(new AppError("böyle bir kullanıcı yok!", 404));
+    }
+    res.status(204).json({
+        status: "success",
+        data: null
+    })
+});
+
+export const updateUser = catchAsync(async(req, res, next) => {
+    const user = await User.findOneAndUpdate({ username: req.params.nickname }, req.body, { new: true, runValidators: true });
+    if (!user) {
+        return next(new AppError("böyle bir kullanıcı yok", 404));
+    }
+    res.status(204).json({
+        status: "success",
+        data: user
+    })
+});

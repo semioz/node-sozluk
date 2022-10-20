@@ -99,8 +99,7 @@ export const restricTo = (...roller) => {
     return (req, res, next) => {
         //roller -> ["çaylak", "yazar", "moderatör"]
         if (!roller.includes(req.user.role)) {
-            //app error'un içini düzenle sonra!!!
-            return next(new AppError("bunu yapamazsın!", 403))
+            return next(new AppError("bunu yapmaya yetkin yok!", 403))
         }
     }
 };

@@ -1,7 +1,6 @@
 import AppError from "./../utils/appError.js";
 import Entry from "../models/entryModel.js";
 import catchAsync from "./../utils/catchAsync.js";
-import { deleteOne } from "./handlerFactory.js";
 
 export const getDebe = (req, res, next) => {
     req.query.limit = "1";
@@ -9,7 +8,6 @@ export const getDebe = (req, res, next) => {
     req.query.fields = "author, baslik, entry, nodeLike, nodeUp, nodeDown, createdAt"
     next();
 };
-
 
 export const getEntry = catchAsync(async(req, res, next) => {
     const entry = await Entry.findOne({ entryNumber: req.params.entrynum })

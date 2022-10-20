@@ -9,10 +9,9 @@ import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
 import hpp from "hpp";
-
 const app = express();
 
-//middlewares
+//--Middlewares--
 
 //security http headers
 app.use(helmet());
@@ -37,7 +36,6 @@ app.use("/", limiter)
 app.use(express.json({
     limit: "10kb"
 }));
-
 //security against nosql query injection
 app.use(mongoSanitize());
 
@@ -60,7 +58,6 @@ app.use(hpp({
         "price"
     ]
 }));
-
 
 //----Routes----
 app.use("/biri", userRoute);
