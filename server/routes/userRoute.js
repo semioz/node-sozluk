@@ -19,7 +19,7 @@ router
     .route("/:nickname")
     .get(getUser)
     .delete(protect, deleteUser)
-    .patch(protect, restricTo("moderatör"), updateUser)
+    .patch(protect, updateUser)
     //.patch(updateMe) ???
 
 

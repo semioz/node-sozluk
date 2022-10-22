@@ -2,13 +2,6 @@ import AppError from "./../utils/appError.js";
 import Entry from "../models/entryModel.js";
 import catchAsync from "./../utils/catchAsync.js";
 
-export const getDebe = (req, res, next) => {
-    req.query.limit = "1";
-    req.query.sortFields = "nodeLike"
-    req.query.fields = "author, baslik, entry, nodeLike, nodeUp, nodeDown, createdAt"
-    next();
-};
-
 export const getEntry = catchAsync(async(req, res, next) => {
     const entry = await Entry.findOne({ entryNumber: req.params.entrynum })
 
@@ -24,7 +17,7 @@ export const getEntry = catchAsync(async(req, res, next) => {
 });
 
 export const setEntryUserIds = (req, res, next) => {
-    if (!req.body.author) req.body.author = req.user.id;
+    if (!req.body.author) req.body.author = req.user.username;
     next()
 }
 
@@ -52,7 +45,7 @@ export const deleteEntry = catchAsync(async(req, res, next) => {
 
 //entry'yi sadece o entry'yi yazan değiştirebilir, moderatör sadece silebilir. değiştiremez.
 export const updateEntry = catchAsync(async(req, res, next) => {
-    const entry = await Entry.findOneAndUpdate({ entryNumber: req.params.entrynum })
+    const entry = await Entry.findOneAndUpdate({ entryNumber: req.params.entrynum }, req.body, { new: true, runValidators: true })
         //catchAsync lazım gibi buraya. bi bak
     if (!entry) {
         return next(new AppError("böyle bir entry yok!", 404))
@@ -65,5 +58,9 @@ export const updateEntry = catchAsync(async(req, res, next) => {
     })
 });
 
-
-//spesifik entry'ler için aggregation pipeline...
+export const getDebe = (req, res, next) => {
+    req.query.limit = "1";
+    req.query.sortFields = "nodeLike"
+    req.query.fields = "author, baslik, entry, nodeLike, nodeUp, nodeDown, createdAt"
+    next();
+};

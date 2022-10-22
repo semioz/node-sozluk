@@ -1,3 +1,8 @@
 class APIFeatures {
-    //add pagination etc.
+    constructor(query, querystring) {
+        this.query = query;
+        this.querystring = querystring;
+    }
+
+
 }
