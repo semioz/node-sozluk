@@ -30,7 +30,7 @@ const limiter = rateLimit({
     message: "Too many requests from this IP. Please try again later!"
 })
 
-app.use("/", limiter)
+app.use("/api", limiter)
 
 //body parser
 app.use(express.json({
@@ -60,8 +60,8 @@ app.use(hpp({
 }));
 
 //----Routes----
-app.use("/biri", userRoute);
-app.use("/entry", entryRoute);
+app.use("/api/v1/biri", userRoute);
+app.use("/api/v1/entry", entryRoute);
 
 app.all("*", (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
