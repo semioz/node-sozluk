@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";
 import AppError from "../utils/appError.js";
 import catchAsync from "./../utils/catchAsync.js";
+import clearHash from "../services/cache.js";
 
 const filteredObj = (obj, ...allowedFiels) => {
     const newObj = {};
@@ -12,16 +13,19 @@ const filteredObj = (obj, ...allowedFiels) => {
 
 export const getUser = catchAsync(async(req, res, next) => {
     const user = await User.findOne({ username: req.params.nickname })
+        .cache({ key: req.params.nickname })
 
     if (!user) {
         return next(new AppError("böyle bir kullanıcı yok!"))
     }
+
     res.status(200).json({
         status: "success",
         data: {
             user
         }
     })
+    clearHash(req.params.username)
 });
 
 export const deleteMe = catchAsync(async(req, res, next) => {

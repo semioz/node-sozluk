@@ -2,47 +2,47 @@ import redis from "redis";
 import mongoose from "mongoose";
 import util from "util";
 
-const redisUrl = "redis://127.0.0.1:6379";
+const redisUrl = process.env.REDIS;
 const client = redis.createClient(redisUrl);
 
-client.hGet = util.promisify(client.hGet);
+client.on("connect", () => console.log("Redis Connection Is Successful!"));
+client.on("err", (err) => console.log("Redis Client Error:", err));
+await client.connect()
+
+//client.hGet = util.promisify(client.hGet) ?????
 const exec = mongoose.Query.prototype.exec;
 
 mongoose.Query.prototype.cache = function(options = {}) {
     this.useCache = true;
-    this.hashKey = JSON.stringify(options.key || "");
+    this.hashKey = JSON.stringify(options.key || "Default");
 
-    return this
-};
+    return this;
+}
 
 mongoose.Query.prototype.exec = async function() {
     if (!this.useCache) {
-        return exec.apply(this, arguments);
+        return exec.apply(this, arguments)
     }
 
     const key = JSON.stringify(Object.assign({}, this.getQuery(), {
         collection: this.mongooseCollection.name
-    }));
+    }))
 
-    //See if we have a value for "key" in redis
-    const cacheValue = await client.hget(this.hashKey, key);
+    //See, if we have a value for key in redis.
+    const cacheValue = await client.hGet(this.hashKey, key);
 
     //If we do, return that
     if (cacheValue) {
-        const doc = JSON.parse(cacheValue);
-
-        return Array.isArray(doc) ? doc.map(el => new this.model(el)) : new this.model(doc);
+        const doc = new this.model(JSON.parse(cacheValue))
+        return Array.isArray(doc) ? doc.map(el => new this.model(el)) : new this.model(doc)
     }
-    //Otherwise, issue the query and store the result in redis
+
     const result = await exec.apply(this, arguments);
-    client.hset(this.hashKey, key, JSON.stringify(result));
-    client.expire(this.hashKey, 10);
 
-    return result
+    client.hSet(this.hashKey, key, JSON.stringify(result), "EX", 10);
+    return result;
 };
 
-module.exports = {
-    clearHash(hashKey) {
-        client.del(JSON.stringify(hashKey))
-    }
-};
+export default function clearHash(hashKey) {
+    client.del(JSON.stringify(hashKey))
+}
