@@ -23,7 +23,6 @@ export const setEntryUserIds = (req, res, next) => {
 }
 
 export const createEntry = catchAsync(async(req, res, next) => {
-
     const newEntry = await Entry.create(req.body);
     res.status(201).json({
         status: "success",
@@ -44,7 +43,6 @@ export const deleteEntry = catchAsync(async(req, res, next) => {
     })
 });
 
-//entry'yi sadece o entry'yi yazan değiştirebilir, moderatör sadece silebilir. değiştiremez.
 export const updateEntry = catchAsync(async(req, res, next) => {
     const entry = await Entry.findOneAndUpdate({ entryNumber: req.params.entryNo }, req.body, { new: true, runValidators: true })
         //catchAsync lazım gibi buraya. bi bak

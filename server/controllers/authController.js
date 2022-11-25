@@ -15,7 +15,7 @@ const signToken = id => {
 const createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id)
 
-    //jwt'i cookie olarak yolla
+    //send the jwt as a cookie
     const cookieOptions = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
         httpOnly: true
@@ -48,41 +48,34 @@ export const signUp = catchAsync(async(req, res, next) => {
 });
 
 export const logIn = catchAsync(async(req, res, next) => {
-    //bu şekilde direkt istenilen değişkenleri bodyden cekebiliyosun
     const { email, password } = req.body;
-
-    //kullanıcının email ve şifreyi yazıp yazmadığını kontrol et
+    //check if the user has typed his password and email or not
     if (!email || !password) {
         return next(new AppError("email ve şifre gerekli!", 400))
     }
-
-    //kullanıcının varolup olmadığını ve şifrenin doğruluğunu kontrol et!
+    //check if user exists and check if the password correct or not
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password))) {
         return next(new AppError("hatalı email veya şifre!", 401))
     }
-    //sıkıntı yoksa tokeni client'a yolla
+    //if everything is good, send the token to the client
     createSendToken(user, 200, res)
 });
-
-//kullanıcının kimliğinin doğrulup doğrulanmadığını kontrol et bu middleware ile!
 
 export const protect = catchAsync(async(req, res, next) => {
     let token;
     //Bearer <token>
-    //buradaki tokeni almak istiyoruz
+    //we want to get the token
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1]
     }
     if (!token) {
         return next(new AppError("giriş yapmadın! lütfen giriş yap!", 401))
     }
-
-    //tokeni doğrula
+    //verify the token
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
-
-    //jwt'nin sahibinin hala mevcut olup olmadığını kontrol et
+        //check if the user of this token still exists
     const freshUser = await User.findById(decoded.id)
     if (!freshUser) {
         return next(new AppError("bu tokenin sahibi yok!"))
@@ -94,7 +87,7 @@ export const protect = catchAsync(async(req, res, next) => {
     req.user = freshUser;
     next();
 });
-//kullanıcı rolüne göre izinler
+//permissions by roles
 export const restricTo = (...roller) => {
     return (req, res, next) => {
         //roller -> ["çaylak", "yazar", "moderatör"]
@@ -105,14 +98,12 @@ export const restricTo = (...roller) => {
 };
 
 export const forgotPassword = catchAsync(async(req, res, next) => {
-    //emaile göre kullanıcıyı bul
     const user = User.findOne({ email: req.body.email })
     if (!user) {
         return next(new AppError("bu email'e sahip bir kullanıcı yok!", 404))
     }
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
-    //kullanıcının emailine yolla
     const resetURL = `${req.protocol}://${req.get("host")}/ayarlar/sifre-sifirla/${resetToken}`
 
     //burasi degisecek
@@ -156,15 +147,11 @@ export const resetPassword = catchAsync(async(req, res, next) => {
 });
 
 export const updatePassword = catchAsync(async(req, res, next) => {
-    //db'den kullanıcıyı getir
     const user = await User.findById(req.user.id).select("+password");
 
-    //kullanıcıdan şifresini değiştirmesi için ilk önce güncel şifresini iste
-    //şifrenin doğruluğunun kontrolü
     if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
         return next(new AppError("girdiğin şifre doğru değil!", 401))
     };
-    //eğer doğruysa, şifresini güncelle.
     user.password = req.body.password;
     user.passwordConfirm = req.body.passwordConfirm
         //log the user in, send JWT
