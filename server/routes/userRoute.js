@@ -19,9 +19,8 @@ router
     .route("/:nickname")
     //Cleaning the cache automatically by using the special middleware for it.
     .get(getUser, cleanCache)
-    .delete(protect, deleteUser)
+    .delete(protect, restricTo("moderatör"), deleteUser)
     .patch(protect, updateUser)
     //.patch(updateMe) ???
-
 
 export default router;

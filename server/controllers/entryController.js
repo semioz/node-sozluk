@@ -23,7 +23,7 @@ export const setEntryUserIds = (req, res, next) => {
 }
 
 export const createEntry = catchAsync(async(req, res, next) => {
-    const newEntry = await Entry.create(req.body);
+    const newEntry = await Entry.create(req.body)
     res.status(201).json({
         status: "success",
         data: {

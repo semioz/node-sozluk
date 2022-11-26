@@ -12,7 +12,7 @@ const filteredObj = (obj, ...allowedFiels) => {
 
 export const getUser = catchAsync(async(req, res, next) => {
     const user = await User.findOne({ username: req.params.nickname })
-        .cache({ key: req.params.nickname })
+        //.cache({ key: req.params.nickname })
 
     if (!user) {
         return next(new AppError("böyle bir kullanıcı yok!"))

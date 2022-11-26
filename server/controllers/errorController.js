@@ -18,7 +18,7 @@ const handleValidationErrorDB = err => {
     return new AppError(message, 400)
 };
 
-const handleJwtError = () => new AppError("Invakid token! Please log in again!", 401)
+const handleJwtError = () => new AppError("Invalid token! Please log in again!", 401)
 
 const handleJwtExpiredError = () => new AppError("Token has expired! Please log in again!", 401)
 
@@ -59,7 +59,6 @@ export default (err, req, res, next) => {
     if (process.env.NODE_ENV === "development") {
         sendErrorDev(err, res)
     } else if (process.env.NODE_ENV === "production") {
-        //productionda temiz hatalar vermek lazım...
         let error = {...err };
         if (error.name === "CastError") error = handleCastErrorDB(error)
         if (error.code === 11000) error = handleDuplicateFieldsDB(error)
