@@ -1,5 +1,5 @@
 import AppError from "./../utils/appError.js";
-import Entry from "../models/entryModel.js";
+import Entry from "./../models/entryModel.js";
 import catchAsync from "./../utils/catchAsync.js";
 
 export const getEntry = catchAsync(async(req, res, next) => {
