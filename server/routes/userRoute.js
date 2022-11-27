@@ -13,8 +13,6 @@ router.patch("/ayarlar/sifre", protect, updatePassword);
 router.patch("/ayarlar/hesabi-kapat", protect, deleteMe)
 router.patch("/ayarlar/guncelle", protect, updateMe)
 
-
-//restricTo() fonksiyonu istenildiği gibi çalışmıyor!
 router
     .route("/:nickname")
     //Cleaning the cache automatically by using the special middleware for it.

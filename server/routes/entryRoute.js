@@ -13,5 +13,4 @@ router
     .route("/")
     .post(protect, setEntryUserIds, createEntry)
 
-
 export default router;
