@@ -11,11 +11,18 @@ process.on("uncaughtException", err => {
     process.exit(1)
 });
 
-mongoose.connect(process.env.MONGO_URI, {
+let uri;
+if (process.env.NODE_ENV == "test") {
+    uri = process.env.TEST_URI;
+} else {
+    uri = process.env.MONGO_URI;
+}
+
+mongoose.connect(uri, {
     useUnifiedTopology: true,
     useNewUrlParser: true
 }).then(() => {
-    console.log("MongoDB connection is successful")
+    console.log("MongoDB connection is successful", uri)
 }).catch(err => {
     console.log("Can't connect to the MongoDB!")
     console.log(err)
@@ -33,3 +40,5 @@ process.on("unhandledRejection", err => {
         process.exit(1);
     })
 });
+
+export default server;

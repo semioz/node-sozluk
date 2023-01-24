@@ -1,10 +1,11 @@
 {
-    "name": "server",
+    "name": "node-sozluk",
     "version": "1.0.0",
     "description": "",
     "main": "server.js",
     "type": "module",
     "scripts": {
+        "test": "set NODE_ENV=test && mocha --timeout 1000",
         "start:dev": "nodemon server.js",
         "start:prod": "NODE_ENV=production nodemon server.js"
     },
@@ -14,6 +15,8 @@
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.20.0",
+        "chai": "^4.3.7",
+        "chai-http": "^4.3.0",
         "dotenv": "^16.0.2",
         "express": "^4.18.1",
         "express-mongo-sanitize": "^2.2.0",
@@ -21,6 +24,7 @@
         "helmet": "^6.0.0",
         "hpp": "^0.2.3",
         "jsonwebtoken": "^8.5.1",
+        "mocha": "^10.2.0",
         "mongoose": "^6.6.0",
         "morgan": "^1.10.0",
         "nodemailer": "^6.7.8",
