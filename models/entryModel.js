@@ -13,7 +13,6 @@ const entrySchema = mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-
 const Entry = mongoose.model("Entry", entrySchema);
 
 export default Entry;

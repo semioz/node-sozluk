@@ -12,11 +12,11 @@ process.on("uncaughtException", err => {
 });
 
 let uri;
-if (process.env.NODE_ENV == "test") {
+if (process.env["NODE_ENV"] == "test") {
     uri = process.env.TEST_URI;
 } else {
     uri = process.env.MONGO_URI;
-}
+};
 
 mongoose.connect(uri, {
     useUnifiedTopology: true,
