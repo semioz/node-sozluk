@@ -15,7 +15,7 @@ export const getUser = catchAsync(async(req, res, next) => {
         //.cache({ key: req.params.nickname })
 
     if (!user) {
-        return next(new AppError("böyle bir kullanıcı yok!"))
+        return next(new AppError("böyle bir kullanıcı yok!",404))
     }
 
     res.status(200).json({

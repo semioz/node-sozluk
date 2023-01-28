@@ -1,5 +1,5 @@
 import express from "express";
-import cleanCache from "../middlewares/cleanCache.js";
+//import cleanCache from "../middlewares/cleanCache.js";
 const router = express.Router();
 import { signUp, logIn, protect, updatePassword, forgotPassword, resetPassword, restricTo } from "./../controllers/authController.js";
 import { getUser, deleteMe, updateMe, deleteUser, updateUser } from "./../controllers/userController.js";
@@ -16,7 +16,7 @@ router.patch("/ayarlar/guncelle", protect, updateMe)
 router
     .route("/:nickname")
     //Cleaning the cache automatically by using the special middleware for it.
-    .get(getUser, cleanCache)
+    .get(getUser)
     .delete(protect, restricTo("moderatör"), deleteUser)
     .patch(protect, updateUser)
     //.patch(updateMe) ???

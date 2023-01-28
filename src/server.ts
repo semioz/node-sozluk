@@ -18,11 +18,8 @@ if (process.env["NODE_ENV"] == "test") {
     uri = process.env.MONGO_URI;
 };
 
-mongoose.connect(uri, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
-}).then(() => {
-    console.log("MongoDB connection is successful", uri)
+mongoose.connect(uri).then(() => {
+    console.log("MongoDB connection is successful")
 }).catch(err => {
     console.log("Can't connect to the MongoDB!")
     console.log(err)
@@ -35,7 +32,7 @@ const server = app.listen(port, () => {
 
 process.on("unhandledRejection", err => {
     console.log("UNHANDLED REJECTION: Shutting down...")
-    console.log(err.name, err.message)
+    if(err instanceof Error)console.log(err.name,err.message);
     server.close(() => {
         process.exit(1);
     })

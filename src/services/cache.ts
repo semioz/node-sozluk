@@ -1,18 +1,19 @@
 import redis from "redis";
 import mongoose from "mongoose";
 
-const redisUrl = process.env.REDIS;
-const client = redis.createClient(redisUrl);
+const client = redis.createClient({url:process.env.REDIS});
 
 client.on("connect", () => console.log("Redis Connection Is Successful!"));
 client.on("err", (err) => console.log("Redis Client Error:", err));
-await client.connect()
+client.connect()
 
 //Hooking into mongoose's query generation and execution process
 //in order to make the caching reusable in the codebase
 const exec = mongoose.Query.prototype.exec;
 
 //Toggleable Cache
+
+/*
 mongoose.Query.prototype.cache = async function(options = {}) {
     this.useCache = true;
     //Hashkey for the top level property
@@ -47,3 +48,5 @@ mongoose.Query.prototype.exec = async function() {
 export const clearHash = function(hashkey) {
     client.del(JSON.stringify(clearHash));
 }
+
+*/

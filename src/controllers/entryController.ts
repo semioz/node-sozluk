@@ -6,7 +6,7 @@ export const getEntry = catchAsync(async(req, res, next) => {
     const entry = await Entry.findById(req.params.entryNo)
 
     if (!entry) {
-        return next(new AppError("böyle bir entry yok!"))
+        return next(new AppError("böyle bir entry yok!",404))
     }
     res.status(200).json({
         status: "success",

@@ -1,4 +1,12 @@
-class AppError extends Error {
+interface AppErrorProps {
+    statusCode: number;
+}
+
+class AppError extends Error implements AppErrorProps{
+    statusCode: number;
+    status:string;
+    isOperational:boolean;
+
     constructor(message, statusCode) {
         super(message);
 

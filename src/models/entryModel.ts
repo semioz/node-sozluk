@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const entrySchema = mongoose.Schema({
+const entrySchema = new mongoose.Schema({
     author: { type: String, required: true },
     baslik: { type: String, required: true },
     entry: { type: String, max: 102399, required: true },

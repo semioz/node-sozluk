@@ -16,9 +16,11 @@ const createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id)
 
     //send the jwt as a cookie
+    //cant call process.env.JWT_COOKIE_EXPIRES_IN ???
     const cookieOptions = {
-        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-        httpOnly: true
+        expires: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        secure:true
     };
 
     if (process.env.NODE_ENV === "production") cookieOptions.secure = true
@@ -78,7 +80,7 @@ export const protect = catchAsync(async(req, res, next) => {
         //check if the user of this token still exists
     const freshUser = await User.findById(decoded.id)
     if (!freshUser) {
-        return next(new AppError("bu tokenin sahibi yok!"))
+        return next(new AppError("bu tokenin sahibi yok!",401))
     }
     //jwt kendisine tanımlandıktan sonra, kullanıcının şifresini değiştirip değiştirmediğini kontrol et!
     if (freshUser.changedPasswordAfter(decoded.iat)) { //iat = issued at
@@ -143,7 +145,7 @@ export const resetPassword = catchAsync(async(req, res, next) => {
     user.passwordResetExpires = undefined;
     await user.save()
 
-    createAndSendToken(user, 200, res)
+    createSendToken(user, 200, res)
 });
 
 export const updatePassword = catchAsync(async(req, res, next) => {

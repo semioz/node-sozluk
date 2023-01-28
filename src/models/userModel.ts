@@ -3,20 +3,62 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-const userSchema = mongoose.Schema({
+interface IUser {
+    username:string;
+    email:string;
+    role:string;
+    password:string;
+    passwordConfirm:string;
+    following:mongoose.Schema.Types.Array;
+    followers:mongoose.Schema.Types.Array;
+    about:string;
+    createdAt:string;
+    updatedAt:Date;
+    profilePicture:string;
+    passwordChangedAt:Date;
+    passwordResetToken:string;
+    passwordResetExpires:Date;
+    active:Boolean;
+}
+
+const userSchema = new mongoose.Schema<IUser>({
     username: {
         type: String,
         required: [true, "bir nick seçmelisin!"],
-        unique: [true, "bu nick alınmış!"],
         lowercase: true,
-        trim: true
+        trim: true,
+        validate: {
+            validator: function (value) {
+                return User.findOne({username: value}).then(user => {
+                    if (user) {
+                        return false;
+                    }
+                    return true;
+                });
+            },
+            message: "bu nick alınmış!"
+        }
     },
     email: {
         type: String,
         required: [true, "email lazım"],
         lowercase: true,
-        validate: [validator.isEmail, "geçerli bir email değil bu!"],
-        unique: [true, "bu email önceden kullanılmış!"]
+        validate: {
+            validator: function(value) {
+                if(!validator.isEmail(value)){
+                    throw new Error("geçerli bir email değil bu!");
+                }
+                return User.find({email: value})
+                .then(user => {
+                    if (user) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
+            },
+            message: 'bu email önceden kullanılmış!'
+        }
     },
     role: {
         type: String,
@@ -53,7 +95,7 @@ const userSchema = mongoose.Schema({
         trim: true
     },
     createdAt: {
-        type: Date,
+        type: String,
         default: new Date().toISOString()
     },
     updatedAt: { type: Date },
@@ -97,7 +139,7 @@ userSchema.pre(/^find/, function(next) {
 
 userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
     if (this.passwordChangedAt) {
-        const changedTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+        const changedTimeStamp = parseInt((this.passwordChangedAt.getTime() / 1000).toString(), 10);
         return JWTTimestamp < changedTimeStamp
     }
     //false means "not changed"
@@ -123,6 +165,6 @@ userSchema.methods.createPasswordResetToken = async function() {
     return resetToken;
 }
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model<IUser>("User", userSchema);
 
 export default User;
