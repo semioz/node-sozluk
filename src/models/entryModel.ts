@@ -1,18 +1,24 @@
 import mongoose from "mongoose";
 
-const entrySchema = new mongoose.Schema({
+export interface IEntry{
+    author:string,
+    baslik:string,
+    entry:string,
+    nodeUp:mongoose.Schema.Types.Array,
+    nodeDown:mongoose.Schema.Types.Array,
+    createdAt:string
+}
+
+const entrySchema = new mongoose.Schema<IEntry>({
     author: { type: String, required: true },
     baslik: { type: String, required: true },
     entry: { type: String, max: 102399, required: true },
-    nodeLike: { type: Array, default: [] },
     nodeUp: { type: Array, default: [] },
     nodeDown: { type: Array, default: [] },
-    createdAt: { type: Date, default: new Date().toISOString() }
+    createdAt: { type: String, default: new Date().toISOString() }
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });
 
-const Entry = mongoose.model("Entry", entrySchema);
-
-export default Entry;
+export const Entry = mongoose.model("Entry", entrySchema);

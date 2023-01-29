@@ -1,9 +1,10 @@
 import AppError from "./../utils/appError.js";
-import Entry from "./../models/entryModel.js";
+import {Entry,IEntry} from "./../models/entryModel.js";
 import catchAsync from "./../utils/catchAsync.js";
+import { Request,Response,NextFunction } from "express";
 
-export const getEntry = catchAsync(async(req, res, next) => {
-    const entry = await Entry.findById(req.params.entryNo)
+export const getEntry = catchAsync(async(req:Request, res:Response, next:NextFunction) => {
+    const entry: IEntry | null = await Entry.findById(req.params.entryNo)
 
     if (!entry) {
         return next(new AppError("böyle bir entry yok!",404))
@@ -16,13 +17,13 @@ export const getEntry = catchAsync(async(req, res, next) => {
     })
 });
 
-export const setEntryUserIds = (req, res, next) => {
+export const setEntryUserIds = (req, res: Response, next: NextFunction) => {
     if (!req.body.author) req.body.author = req.user.username;
     next()
 }
 
-export const createEntry = catchAsync(async(req, res, next) => {
-    const newEntry = await Entry.create(req.body)
+export const createEntry = catchAsync(async(req:Request, res:Response, next:NextFunction) => {
+    const newEntry:IEntry = await Entry.create(req.body)
     res.status(201).json({
         status: "success",
         data: {
@@ -31,8 +32,8 @@ export const createEntry = catchAsync(async(req, res, next) => {
     })
 });
 
-export const deleteEntry = catchAsync(async(req, res, next) => {
-    const entry = await Entry.findByIdAndDelete(req.params.entryNo)
+export const deleteEntry = catchAsync(async(req:Request, res:Response, next:NextFunction) => {
+    const entry:IEntry | null = await Entry.findByIdAndDelete(req.params.entryNo)
     if (!entry) {
         return next(new AppError("böyle bir entry yok!", 404))
     }
@@ -42,8 +43,8 @@ export const deleteEntry = catchAsync(async(req, res, next) => {
     })
 });
 
-export const updateEntry = catchAsync(async(req, res, next) => {
-    const entry = await Entry.findByIdAndUpdate(req.params.entryNo, req.body, { new: true, runValidators: true })
+export const updateEntry = catchAsync(async(req:Request, res:Response, next:NextFunction) => {
+    const entry:IEntry | null = await Entry.findByIdAndUpdate(req.params.entryNo, req.body, { new: true, runValidators: true })
     if (!entry) {
         return next(new AppError("böyle bir entry yok!", 404))
     }
