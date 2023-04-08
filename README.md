@@ -11,5 +11,4 @@
 * [Express.js](http://expressjs.com/)
 * [Postman](https://www.getpostman.com/)
 * [Mongoose](https://mongoosejs.com/)
-* [JSON Web Token](https://jwt.io/)
 * [Redis](www.redis.com)
