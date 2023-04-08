@@ -1,4 +1,4 @@
-import express  from "express";
+import express,{Request,Response,NextFunction}  from "express";
 import morgan from "morgan";
 import userRoute from "./routes/userRoute.js";
 import entryRoute from "./routes/entryRoute.js"
@@ -42,7 +42,7 @@ app.use(mongoSanitize());
 //Data sanitization against XSS attacks
 app.use(xss());
 
-app.use((req, res, next) => {
+app.use((req:Request, res:Response, next:NextFunction) => {
     req.requestTime = new Date().toISOString();
     next();
 });
@@ -63,7 +63,7 @@ app.use(hpp({
 app.use("/api/v1/biri", userRoute);
 app.use("/api/v1/entry", entryRoute);
 
-app.all("*", (req, res, next) => {
+app.all("*", (req:Request, res:Response, next:NextFunction  ) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 

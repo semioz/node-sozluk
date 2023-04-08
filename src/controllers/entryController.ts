@@ -3,8 +3,9 @@ import {Entry,IEntry} from "./../models/entryModel.js";
 import catchAsync from "./../utils/catchAsync.js";
 import { Request,Response,NextFunction } from "express";
 
+
 export const getEntry = catchAsync(async(req:Request, res:Response, next:NextFunction) => {
-    const entry: IEntry | null = await Entry.findById(req.params.entryNo)
+    const entry: IEntry | null = await Entry.findById(req.params.entryNo)
 
     if (!entry) {
         return next(new AppError("böyle bir entry yok!",404))

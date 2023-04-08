@@ -6,7 +6,7 @@ import "./services/cache";
 dotenv.config();
 
 //catch uncaught exception
-process.on("uncaughtException", err => {
+process.on("uncaughtException", (err:Error) => {
     console.log("UNCAUGHT EXCEPTION: Shutting down...")
     console.log(err.name, err.message)
     process.exit(1)
@@ -21,7 +21,7 @@ if (process.env["NODE_ENV"] == "test") {
 
 mongoose.connect(uri).then(() => {
     console.log("MongoDB connection is successful")
-}).catch(err => {
+}).catch((err:Error) => {
     console.log("Can't connect to the MongoDB!")
     console.log(err)
 });
@@ -31,7 +31,7 @@ const server = app.listen(port, () => {
     console.log(`Listening on port ${port}...`);
 });
 
-process.on("unhandledRejection", err => {
+process.on("unhandledRejection", (err:Error) => {
     console.log("UNHANDLED REJECTION: Shutting down...")
     if(err instanceof Error)console.log(err.name,err.message);
     server.close(() => {
