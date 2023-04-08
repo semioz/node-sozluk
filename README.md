@@ -6,6 +6,7 @@
 
 ## Technologies
 
+* [Docker](https://docker.com)
 * [Node.js](https://nodejs.org/en/)
 * [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 * [Express.js](http://expressjs.com/)
